@@ -8,6 +8,14 @@ var _keys = require('babel-runtime/core-js/object/keys');
 
 var _keys2 = _interopRequireDefault(_keys);
 
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
+
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
 var _typeof3 = _interopRequireDefault(_typeof2);
@@ -18,6 +26,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function createExec(gun) {
   var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var logging = opts.logging,
+      log = opts.log;
+
 
   function isObj(obj) {
     return (typeof commands === 'undefined' ? 'undefined' : (0, _typeof3.default)(commands)) !== 'object';
@@ -30,12 +41,23 @@ function createExec(gun) {
     return [obj];
   }
 
+  function flatten(a) {
+    var _ref;
+
+    return Array.isArray(a) ? (_ref = []).concat.apply(_ref, (0, _toConsumableArray3.default)(a.map(flatten))) : a;
+  }
+
+  function normalizeArgs(args) {
+    args = flatten(args);
+    return normalizeArr(args);
+  }
+
   function normalizeArr(obj) {
     return Array.isArray(obj) ? obj : arrWrapObj(obj);
   }
 
   function defaultLog(level) {
-    if (opts.logging) {
+    if (logging) {
       var _console;
 
       for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -46,13 +68,26 @@ function createExec(gun) {
     }
   }
 
-  var logging = opts.logging,
-      log = opts.log;
-
-
   log = log || defaultLog;
 
-  return function execute(g, commands) {
+  // could be used in case command is {val: cb, shallow: true}
+  function shallow(value) {
+    var copy = (0, _assign2.default)({}, value);
+    delete copy._;
+    return copy;
+  }
+
+  function defaultIsValidRoot(command, node) {
+    if (command === 'put' || command === 'set') {
+      return false;
+    }
+    return true;
+  }
+  var isValidRoot = opts.isValidRoot || defaultIsValidRoot;
+
+  return function execute(gunInstance, commands, options) {
+    logging = options ? options.logging : logging;
+
     // must be Object or Array
     if (!isObj(commands)) {
       log('error', 'execute: Invalid commands ', commands);
@@ -66,19 +101,25 @@ function createExec(gun) {
       var commandName = key;
       var args = command[key];
 
-      args = normalizeArr(args);
-      // log('info', 'node', node)
+      // rewind to root level of gunInstance
+      if (command.root && isValidRoot(command, node)) {
+        log('info', 'chain reset to root');
+        node = gunInstance;
+      }
+
+      var ctx = node;
+      var returnVal = void 0;
+      args = normalizeArgs(args);
       log('info', 'command', command);
       log('info', 'execute', commandName, args);
       try {
-        node = node[commandName].apply(node, args);
+        returnVal = node[commandName].apply(ctx, args);
       } catch (e) {
         log('error', node);
         throw new Error('execute: Failed applying ' + command);
       }
-      log('info', 'return', node);
-      return node;
-    }, gun);
+      return returnVal;
+    }, gunInstance);
   };
 }
 //# sourceMappingURL=index.js.map

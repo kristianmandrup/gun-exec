@@ -1,4 +1,9 @@
 export default function createExec(gun, opts = {}) {
+  let {
+    logging,
+    log,
+  } = opts
+
   function isObj(obj) {
     return (typeof commands !== 'object')
   }
@@ -10,24 +15,45 @@ export default function createExec(gun, opts = {}) {
     return [obj]
   }
 
+  function flatten(a) {
+    return Array.isArray(a) ? [].concat(...a.map(flatten)) : a;
+  }
+
+  function normalizeArgs(args) {
+    args = flatten(args)
+    return normalizeArr(args)
+  }
+
   function normalizeArr(obj) {
     return Array.isArray(obj) ? obj : arrWrapObj(obj)
   }
 
   function defaultLog(level, ...args) {
-    if (opts.logging) {
+    if (logging) {
       console.log(...args)
     }
   }
 
-  let {
-    logging,
-    log,
-  } = opts
-
   log = log || defaultLog
 
-  return function execute(g, commands) {
+  // could be used in case command is {val: cb, shallow: true}
+  function shallow(value) {
+    let copy = Object.assign({}, value)
+    delete copy._
+    return copy
+  }
+
+  function defaultIsValidRoot(command, node) {
+    if (command === 'put' || command === 'set') {
+      return false
+    }
+    return true
+  }
+  let isValidRoot = opts.isValidRoot || defaultIsValidRoot
+
+  return function execute(gunInstance, commands, options) {
+    logging = options ? options.logging : logging
+
     // must be Object or Array
     if (!isObj(commands)) {
       log('error', 'execute: Invalid commands ', commands)
@@ -41,18 +67,24 @@ export default function createExec(gun, opts = {}) {
       let commandName = key
       let args = command[key]
 
-      args = normalizeArr(args)
-      // log('info', 'node', node)
+      // rewind to root level of gunInstance
+      if (command.root && isValidRoot(command, node)) {
+        log('info', 'chain reset to root')
+        node = gunInstance
+      }
+
+      let ctx = node
+      let returnVal
+      args = normalizeArgs(args)
       log('info', 'command', command)
       log('info', 'execute', commandName, args)
       try {
-        node = node[commandName].apply(node, args)
+        returnVal = node[commandName].apply(ctx, args)
       } catch (e) {
         log('error', node)
         throw new Error(`execute: Failed applying ${command}`)
       }
-      log('info', 'return', node)
-      return node
-    }, gun)
+      return returnVal
+    }, gunInstance)
   }
 }

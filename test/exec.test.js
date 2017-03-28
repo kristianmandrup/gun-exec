@@ -26,20 +26,51 @@ test.cb('exec', t => {
     }
   }])
 
+  const cb = (data) => {
+    console.log('cb data', shallow(data))
+  }
+
+  const cbEnd = (data) => {
+    console.log('kris', shallow(data))
+    t.end()
+  }
+
+  execute(gun, [{
+    get: 'colors'
+  }, {
+    val: cb
+  }])
+
   let cols = execute(gun, {
     get: 'colors'
   })
+
+  cols['val'].apply(cols, [cb])
 
   let value
   cols.val(v => {
 
     value = shallow(v)
 
-    console.log('value', value)
-
     t.deepEqual(value, {
       color: 'blue'
     })
-    t.end()
+
+    let blue = execute(gun, [{
+      get: 'kris'
+    }, {
+      put: {
+        name: 'kris',
+        role: 'developer'
+      },
+    }, {
+      get: 'kris',
+      root: true
+    }, {
+      val: cbEnd,
+      shallow: true
+    }], {
+      logging: false
+    })
   })
 })

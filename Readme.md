@@ -42,6 +42,31 @@ let cols = execute(gun, {
 // ...
 ```
 
+Special options:
+- `root: true` : resets the chain context to the gun instance.
+
+Advanced example
+
+```js
+  let blue = execute(gun, [{
+    get: 'kris'
+  }, {
+    put: {
+      name: 'kris',
+      role: 'developer'
+    },
+  }, {
+    get: 'kris',
+    root: true
+  }, {
+    val: cbEnd
+  }], {
+    logging: false
+  })
+```
+
+Here we override the logging level of this `execute` context via `logging: false` as the final (optional) argument.
+
 ## Contributing
 
 Install dependency modules/packages
