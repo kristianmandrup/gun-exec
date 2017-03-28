@@ -48,6 +48,8 @@ Install dependency modules/packages
 
 `npm i`
 
+![bad ass](https://github.com/kristianmandrup/gun-exec/raw/master/massive-gun.jpg)
+
 ### Compile/Build
 
 The project includes a `gulpfile` configured to use Babel 6.
