@@ -1,0 +1,12 @@
+test
+*.test.js
+*.ts
+*.html
+css
+gulpfile
+.babelrc
+sandbox
+play
+examples
+docs
+yarn.lock
