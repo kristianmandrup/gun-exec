@@ -48,7 +48,7 @@ Install dependency modules/packages
 
 `npm i`
 
-![bad ass](https://github.com/kristianmandrup/gun-exec/raw/master/massive-gun.jpg)
+![bad ass](https://github.com/kristianmandrup/gun-exec/raw/master/bad-ass.jpg)
 
 ### Compile/Build
 
