@@ -1,6 +1,6 @@
 # Gun data API executer
 
-![gun-exec](https://github.com/kristianmandrup/gun-exec/raw/master/gun-exec.jpg)
+![gun-exec](https://github.com/kristianmandrup/gun-exec/raw/master/army-guy.jpg)
 
 ## Install
 
