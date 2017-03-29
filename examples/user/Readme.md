@@ -3,9 +3,25 @@
 Attempt to create a simple example for integrating Elm and Gun.js via ports.
 Please see [Elm javascript interop guide](https://guide.elm-lang.org/interop/javascript.html)
 
+Use this example app as a template for your own app.
+
 ## Online experimentation
 
 You can also experiment using [Ellie - online Elm editor/IDE](https://www.humblespark.com/ellie-announcement/)
+
+## Compile
+
+`elm-make Main.elm --output main.js`
+
+## main.html
+
+The `main.html` file references a local `gun-exec.js` and `gun.js` from github.
+It also references `main.js`, compiled from `Main.elm`
+
+It goes on to embed the Elm app, create a `Gun` instance and connects to the Elm (IO)
+ports of the app.
+
+See [Elm usage](https://github.com/kristianmandrup/gun-exec/blob/master/Elm-usage.md) for more details on the basic architecture and inter-communication.
 
 ## Main
 

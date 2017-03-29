@@ -15,5 +15,4 @@ initialModel : Model
 initialModel =
     { user = initialUser
     , gunUser = initialUser
-    , name = ""
     }

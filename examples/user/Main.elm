@@ -26,26 +26,23 @@ init =
     ( initialModel, Cmd.none )
 
 
-buildModel : Model -> List User
-buildModel model =
-    [ { id = 0
-      , name = model.name
-      , email = Nothing
-      }
+buildModel : User -> List User
+buildModel user =
+    [ user
     ]
 
 
-createCommand : Model -> CommandPort.GunExecCommand
-createCommand model =
+createCommand : User -> CommandPort.GunExecCommand
+createCommand user =
     [ { name = "put"
-      , model = buildModel model
+      , model = buildModel user
       }
     ]
 
 
-submitModel : Model -> Cmd msg
-submitModel model =
-    gunCommand (createCommand model)
+submitNewUser : User -> Cmd msg
+submitNewUser user =
+    gunCommand (createCommand user)
 
 
 emailValue : Maybe String -> String
@@ -103,13 +100,13 @@ update msg model =
             ( { model | user = user }, Cmd.none )
 
         Id id ->
-            ( { model | user = setId id model.user }, submitModel model )
+            ( { model | user = setId id model.user }, submitNewUser model.user )
 
         Name name ->
-            ( { model | user = setName name model.user }, submitModel model )
+            ( { model | user = setName name model.user }, submitNewUser model.user )
 
         Email email ->
-            ( { model | user = setEmail email model.user }, submitModel model )
+            ( { model | user = setEmail email model.user }, submitNewUser model.user )
 
 
 subscriptions : Model -> Sub Msg
