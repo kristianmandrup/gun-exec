@@ -36,11 +36,13 @@ export default function createExec(gun, opts = {}) {
 
   log = log || defaultLog
 
-  // could be used in case command is {val: cb, shallow: true}
-  function shallow(value) {
-    let copy = Object.assign({}, value)
-    delete copy._
-    return copy
+  function validateCommand(commandName, args) {
+    if (!Array.isArray(args)) {
+      throw new Error(`Invalid arguments ${args}`)
+    }
+    if (typeof commandName !== 'string') {
+      throw new Error(`Invalid command ${commandName}`)
+    }
   }
 
   function defaultIsValidRoot(command, node) {
@@ -68,6 +70,7 @@ export default function createExec(gun, opts = {}) {
         node = gunInstance
         delete command.root
       }
+      log('info', 'command', command)
 
       let name
       let args = []
@@ -75,6 +78,10 @@ export default function createExec(gun, opts = {}) {
         // {name: 'put', args: [{ name: 'kris' }, { sync: false }] }
         name = command.name
         args = command.args
+
+        if (command.model) {
+          args = command.model || args
+        }
       } else {
         // extract from key/value pair
         // { put: [{ name: 'kris' }, { sync: false }] }
@@ -88,7 +95,18 @@ export default function createExec(gun, opts = {}) {
       let ctx = node
       let returnVal
       args = normalizeArgs(args)
-      log('info', 'command', command)
+
+      function validateCommand(commandName, args) {
+        if (!Array.isArray(args)) {
+          throw new Error(`Invalid arguments ${args}`)
+        }
+        if (typeof commandName !== 'string') {
+          throw new Error(`Invalid command ${commandName}`)
+        }
+      }
+
+      validateCommand(commandName, args)
+
       log('info', 'execute', commandName, args)
       try {
         returnVal = node[commandName].apply(ctx, args)

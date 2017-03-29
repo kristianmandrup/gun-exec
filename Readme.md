@@ -2,6 +2,24 @@
 
 ![gun-exec](https://github.com/kristianmandrup/gun-exec/raw/master/army-guy.jpg)
 
+Execute [Gun.js](gun.js.org) API via structured data.
+
+## Why?
+
+A structured data API is useful for clients who don't have direct access to the `gun` instance or the Javascript environment.
+
+The "raison d'être" was an attempt to use Gun from Elm, a foreign client environment. With gun exec we can do:
+
+```js
+let execute = createExec(Gun(), {logging: true})
+
+app.ports.gunCommander.subscribe(function (command) {
+  console.log('gun command from elm', command)
+  // execute command via gun-exec
+  execute(command)
+})
+```
+
 ## Install
 
 npm: `npm i -S gun-exec` (soon)
@@ -55,7 +73,19 @@ Using structured commands in the form `name` and `args`
   }])
 ```
 
-You can even mix and match these two variants of command declarations if you like (or need)
+For mutations such as `set` and `put` you can use explicit `model` option
+
+```js
+  execute(gun, [{
+    name: 'get',
+    args: 'colors'
+  }, {
+    name: 'put',
+    model: myColors
+  }])
+```
+
+You can mix and match these command declaration variants as you like
 
 Special options:
 - `root: true` : resets the chain context to the gun instance.
@@ -83,13 +113,17 @@ Advanced example
 
 Here we override the logging setting of this `execute` context via `logging: false` option in the final (optional) argument.
 
+## Elm usage
+
+See [Elm usage example](https://github.com/kristianmandrup/gun-exec/blob/master/Elm-usage.md)
+
+![bad ass](https://github.com/kristianmandrup/gun-exec/raw/master/bad-ass.jpg)
+
 ## Contributing
 
 Install dependency modules/packages
 
 `npm i`
-
-![bad ass](https://github.com/kristianmandrup/gun-exec/raw/master/bad-ass.jpg)
 
 ### Compile/Build
 
