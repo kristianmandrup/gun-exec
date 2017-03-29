@@ -8,10 +8,6 @@ var _keys = require('babel-runtime/core-js/object/keys');
 
 var _keys2 = _interopRequireDefault(_keys);
 
-var _assign = require('babel-runtime/core-js/object/assign');
-
-var _assign2 = _interopRequireDefault(_assign);
-
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
@@ -70,11 +66,13 @@ function createExec(gun) {
 
   log = log || defaultLog;
 
-  // could be used in case command is {val: cb, shallow: true}
-  function shallow(value) {
-    var copy = (0, _assign2.default)({}, value);
-    delete copy._;
-    return copy;
+  function validateCommand(commandName, args) {
+    if (!Array.isArray(args)) {
+      throw new Error('Invalid arguments ' + args);
+    }
+    if (typeof commandName !== 'string') {
+      throw new Error('Invalid command ' + commandName);
+    }
   }
 
   function defaultIsValidRoot(command, node) {
@@ -96,21 +94,49 @@ function createExec(gun) {
     commands = normalizeArr(commands);
 
     return commands.reduce(function (node, command) {
-      var keys = (0, _keys2.default)(command);
-      var key = keys[0];
-      var commandName = key;
-      var args = command[key];
-
       // rewind to root level of gunInstance
       if (command.root && isValidRoot(command, node)) {
         log('info', 'chain reset to root');
         node = gunInstance;
+        delete command.root;
       }
+      log('info', 'command', command);
+
+      var name = void 0;
+      var args = [];
+      if (command.name) {
+        // {name: 'put', args: [{ name: 'kris' }, { sync: false }] }
+        name = command.name;
+        args = command.args;
+
+        if (command.model) {
+          args = command.model || args;
+        }
+      } else {
+        // extract from key/value pair
+        // { put: [{ name: 'kris' }, { sync: false }] }
+        var keys = (0, _keys2.default)(command);
+        name = keys[0];
+        args = command[name];
+      }
+
+      var commandName = name;
 
       var ctx = node;
       var returnVal = void 0;
       args = normalizeArgs(args);
-      log('info', 'command', command);
+
+      function validateCommand(commandName, args) {
+        if (!Array.isArray(args)) {
+          throw new Error('Invalid arguments ' + args);
+        }
+        if (typeof commandName !== 'string') {
+          throw new Error('Invalid command ' + commandName);
+        }
+      }
+
+      validateCommand(commandName, args);
+
       log('info', 'execute', commandName, args);
       try {
         returnVal = node[commandName].apply(ctx, args);

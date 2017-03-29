@@ -1,6 +1,6 @@
 {
   "name": "gun-exec",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Execute Gun.js API via structured data",
   "main": "dist/index.js",
   "scripts": {
