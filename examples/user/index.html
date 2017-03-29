@@ -18,17 +18,23 @@
     let execute = createExec(gun, {
       logging: true
     })
-    var node = gun.get('color')
+    var node = gun.get('user')
 
     app.ports.gunCommander.subscribe(function (command) {
       console.log('gun command from elm', command)
 
+      // Elm model:
+      // User =
+      //   { id : Int
+      //   , email : Maybe String
+      //   , name : String
+      //   }
+
       // for testing
-      // node.put({
-      //   red: 0,
-      //   green: 0,
-      //   blue: 70
-      // })
+      node.put({
+        id: 1,
+        name: 'kris'
+      })
 
       // execute command via gun-exec
       // execute(command)

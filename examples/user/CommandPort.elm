@@ -1,12 +1,12 @@
 port module CommandPort exposing (..)
 
-import UserModel exposing (User)
+import AppModel exposing (User)
 
 
 -- send Gun commands over port
 
 
-port gunCommander : GunExecCommand -> Cmd msg
+port gunCommand : GunExecCommand -> Cmd msg
 
 
 
@@ -17,11 +17,11 @@ type alias GunModel =
     User
 
 
-type alias GunCommand a =
+type alias GunCommand =
     { name : String
-    , args : List a
+    , model : List User
     }
 
 
 type alias GunExecCommand =
-    List GunCommand String
+    List GunCommand
