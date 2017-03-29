@@ -84,9 +84,13 @@ main =
 ```html
 <head>
   <script src="http://rawgit.com/amark/gun/master/gun.js"></script>
+  <script src="http://rawgit.com/kristianmandrup/gun-exec/master/dist/gun-exec.js"></script>
   <script>
     var gun = Gun();
     var node = gun.get('color')
+
+    var execute = createExec(gun, {logging: true})
+
     app.ports.gunCommander.subscribe(function (command) {
       console.log('gun command from elm', command)
 
@@ -98,7 +102,7 @@ main =
       // })
 
       // execute command via gun-exec
-      // gun.execute(command)
+      // execute(command)
     })
 
     node.on(function (data) {

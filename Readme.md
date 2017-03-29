@@ -4,7 +4,7 @@
 
 Execute [Gun.js](gun.js.org) API via structured data.
 
-## Why?
+## Why
 
 A structured data API is useful for clients who don't have direct access to the `gun` instance or the Javascript environment.
 
@@ -88,9 +88,10 @@ For mutations such as `set` and `put` you can use explicit `model` option
 You can mix and match these command declaration variants as you like
 
 Special options:
+
 - `root: true` : resets the chain context to the gun instance.
 
-Advanced example
+### Advanced example
 
 ```js
   let blue = execute(gun, [{
@@ -116,6 +117,8 @@ Here we override the logging setting of this `execute` context via `logging: fal
 ## Elm usage
 
 See [Elm usage example](https://github.com/kristianmandrup/gun-exec/blob/master/Elm-usage.md)
+
+An Elm example app can be found in [examples/user](https://github.com/kristianmandrup/gun-exec/blob/master/examples/user)
 
 ![bad ass](https://github.com/kristianmandrup/gun-exec/raw/master/bad-ass.jpg)
 
