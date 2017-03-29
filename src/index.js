@@ -62,16 +62,28 @@ export default function createExec(gun, opts = {}) {
     commands = normalizeArr(commands)
 
     return commands.reduce((node, command) => {
-      let keys = Object.keys(command)
-      let key = keys[0]
-      let commandName = key
-      let args = command[key]
-
       // rewind to root level of gunInstance
       if (command.root && isValidRoot(command, node)) {
         log('info', 'chain reset to root')
         node = gunInstance
+        delete command.root
       }
+
+      let name
+      let args = []
+      if (command.name) {
+        // {name: 'put', args: [{ name: 'kris' }, { sync: false }] }
+        name = command.name
+        args = command.args
+      } else {
+        // extract from key/value pair
+        // { put: [{ name: 'kris' }, { sync: false }] }
+        let keys = Object.keys(command)
+        name = keys[0]
+        args = command[name]
+      }
+
+      let commandName = name
 
       let ctx = node
       let returnVal

@@ -36,9 +36,11 @@ test.cb('exec', t => {
   }
 
   execute(gun, [{
-    get: 'colors'
+    name: 'get',
+    args: 'colors'
   }, {
-    val: cb
+    name: 'val',
+    args: [cb]
   }])
 
   let cols = execute(gun, {

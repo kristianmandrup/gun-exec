@@ -24,8 +24,9 @@ import createExec from 'gun-exec'
 const gun = Gun();
 
 let execute = createExec(gun, {
-  logging: true
-})
+    // default options for each execute context
+    logging: true
+  })
 
 // equivalent to: gun.get('colors').put({color: 'blue'})
 execute(gun, [{
@@ -41,6 +42,20 @@ let cols = execute(gun, {
 })
 // ...
 ```
+
+Using structured commands in the form `name` and `args`
+
+```js
+  execute(gun, [{
+    name: 'get',
+    args: 'colors'
+  }, {
+    name: 'val',
+    args: [cb]
+  }])
+```
+
+You can even mix and match these two variants of command declarations if you like (or need)
 
 Special options:
 - `root: true` : resets the chain context to the gun instance.
@@ -61,11 +76,12 @@ Advanced example
   }, {
     val: cbEnd
   }], {
+    // override options for this execution context
     logging: false
   })
 ```
 
-Here we override the logging level of this `execute` context via `logging: false` as the final (optional) argument.
+Here we override the logging setting of this `execute` context via `logging: false` option in the final (optional) argument.
 
 ## Contributing
 
