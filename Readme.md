@@ -1,5 +1,7 @@
 # Gun data API executer
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/kristianmandrup/gun-exec.svg)](https://greenkeeper.io/)
+
 ![gun-exec](https://github.com/kristianmandrup/gun-exec/raw/master/army-guy.jpg)
 
 Execute [Gun.js](gun.js.org) API via structured data.
